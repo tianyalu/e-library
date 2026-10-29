@@ -1,0 +1,74 @@
+spring:
+  application:
+    name: e-library
+  profiles:
+    active: mysql
+
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 300000
+      cache-null-values: false
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      connect-timeout: 2s
+
+server:
+  port: 8080
+  shutdown: graceful
+
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+  metrics:
+    tags:
+      application: e-library
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+security:
+  jwt:
+    secret: ${SECURITY_JWT_SECRET:local-dev-secret-do-not-use-in-prod-local-dev-secret}
+    issuer: e-library
+    access-token-ttl-seconds: 3600
+
+elibrary:
+  policy:
+    loan-period-days: 14
+    renewal-days: 7
+    max-renewals: 1
+    max-active-loans: 5
+    fine-per-day: 0.50
+    currency: CNY
+  outbox:
+    enabled: true
+    batch-size: 100
+    delay-millis: 1000
+  catalog:
+    max-page-size: 100
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{traceId:-}] %-5level %logger{36} - %msg%n"
+  level:
+    com.example.elibrary: INFO
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

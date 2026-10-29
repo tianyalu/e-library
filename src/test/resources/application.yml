@@ -1,0 +1,50 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:elibrary-test;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: ""
+    hikari:
+      pool-name: h2-test
+      maximum-pool-size: 20
+      minimum-idle: 2
+      auto-commit: false
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  flyway:
+    enabled: false
+  cache:
+    type: simple
+
+server:
+  port: 0
+  shutdown: graceful
+
+security:
+  jwt:
+    secret: test-secret-do-not-use-outside-tests-test-secret-do-not-use
+    issuer: e-library-test
+    access-token-ttl-seconds: 3600
+
+elibrary:
+  policy:
+    loan-period-days: 14
+    renewal-days: 7
+    max-renewals: 1
+    max-active-loans: 5
+    fine-per-day: 0.50
+    currency: CNY
+  outbox:
+    enabled: true
+    batch-size: 50
+    delay-millis: 3600000
+  catalog:
+    max-page-size: 100
+
+logging:
+  level:
+    com.example.elibrary: INFO
+    org.hibernate.SQL: WARN
